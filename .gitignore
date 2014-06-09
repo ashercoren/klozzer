@@ -7,3 +7,11 @@ pom.xml.asc
 *.class
 /.lein-*
 /.nrepl-port
+/lib/
+/classes/
+/target/
+/checkouts/
+.lein-deps-sum
+.lein-repl-history
+.lein-plugins/
+.lein-failures
