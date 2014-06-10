@@ -1,4 +1,4 @@
-(defproject klozzer "0.1.0-SNAPSHOT"
+(defproject viebel/klozzer "0.1.0"
   :description "File System Browser API with core.async"
   :url "https://github.com/viebel/klozzer"
   :license {:name "Eclipse Public License"
@@ -8,6 +8,7 @@
                  [im.chit/purnam "0.4.3"]
                  [org.clojure/core.async "0.1.278.0-76b25b-alpha"]]
   :plugins [[lein-cljsbuild "1.0.3"]]
+  :source-paths ["src/cljs"]
   :cljsbuild {
               :builds
               {:dev {:source-paths ["src/cljs"]

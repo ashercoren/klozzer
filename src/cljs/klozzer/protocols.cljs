@@ -1,7 +1,8 @@
-(ns ^:shared klozzer.protocols)
+(ns ^:shared klozzer.protocols
+   (:refer-clojure :exclude [-write]))
 
 (defprotocol IFileSystem
-  (-write-file [this filename data] "Writes a file with data")
+  (-write [this filename data] "Writes a file with data")
   (-file-entry [this filename] "Retrieves the fileEntry javascript object")
-  (-url-of-file [this filename] "Retrieves the url of the file")
-  (-read-file [this filename] "Reads a file"))
+  (-url [this filename] "Retrieves the url of the file")
+  (-read [this filename format] "Reads a file"))
