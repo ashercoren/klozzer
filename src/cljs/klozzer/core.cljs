@@ -38,9 +38,7 @@
     (let [c (chan)]
       (go
         (if-let [file-entry (<! (-file-entry this filename))]
-          (do
-            (print "file-entry-res:" file-entry)
-            (!> file-entry.file #(put! c %)))
+          (!> file-entry.file #(put! c %))
           (close! c)))
       c))
   (-url [this filename]
@@ -57,8 +55,8 @@
                                   (put! c (? e.target.result))))
             (case format
               "text" (!> reader.readAsText file)
-              "arraybuffer" (!> reader.readAsArrayBuffer file))))
-        (close! c))
+              "arraybuffer" (!> reader.readAsArrayBuffer file)))
+          (close! c)))
       c)))
 
 (defn new-storage [size-in-mb]
