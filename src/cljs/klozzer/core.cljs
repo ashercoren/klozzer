@@ -1,6 +1,6 @@
 (ns klozzer.core
   (:require [cljs.core.async :refer [<! close! untap tap chan put!]]
-            [klozzer.protocols :refer [IFileSystem -write -read -file-entry -url]])
+            [klozzer.protocols :refer [IFileSystem -write -read -file-entry -file -url]])
   (:use-macros [cljs.core.async.macros :only [go]]
                [purnam.core :only [? ! obj !>]]))
 
@@ -31,9 +31,17 @@
   (-file-entry [this filename]
     (let [c (chan)]
       (!> fs.root.getFile filename (obj :create false) 
-          (fn [file-entry]
-            (put! c file-entry))
+          #(put! c %)
           (partial my-error-handler "fs.root.getFile" c #{"NotFoundError"}))
+      c))
+  (-file [this filename]
+    (let [c (chan)]
+      (go
+        (if-let [file-entry (<! (-file-entry this filename))]
+          (do
+            (print "file-entry-res:" file-entry)
+            (!> file-entry.file #(put! c %)))
+          (close! c)))
       c))
   (-url [this filename]
     (go 
@@ -43,18 +51,14 @@
   (-read [this filename format]
     (let [c (chan)]
       (go 
-        (let [file-entry (<! (-file-entry this filename))]
-            (if file-entry
-              (!> file-entry.file
-                  (fn [file]
-                    (let [reader (js/FileReader.)]
-                      (! reader.onloadend (fn [e]
-                                            (put! c (? e.target.result))))
-                      (case format
-                        "text" (!> reader.readAsText file)
-                        "arraybuffer" (!> reader.readAsArrayBuffer file))))
-                  (partial my-error-handler "file-entry.file" c))
-              (close! c))))
+        (if-let [file (<! (-file this filename))]
+          (let [reader (js/FileReader.)]
+            (! reader.onloadend (fn [e]
+                                  (put! c (? e.target.result))))
+            (case format
+              "text" (!> reader.readAsText file)
+              "arraybuffer" (!> reader.readAsArrayBuffer file))))
+        (close! c))
       c)))
 
 (defn new-storage [size-in-mb]
