@@ -1,4 +1,6 @@
+*.swp
 /target
+/resources
 /classes
 /checkouts
 pom.xml
