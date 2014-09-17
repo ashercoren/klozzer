@@ -7,7 +7,7 @@
 
 (defn my-error-handler 
   ([topic res e] 
-    (my-error-handler topic res e #{}))
+    (my-error-handler topic res #{} e))
   ([topic res valid-error-names e] 
     (close! res)
     (when-not (valid-error-names (? e.name))
