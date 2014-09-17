@@ -7,12 +7,12 @@
 
 (defn my-error-handler 
   ([topic res e] 
-    (my-error-handler topic res #{} e))
+   (my-error-handler topic res #{} e))
   ([topic res valid-error-names e] 
-    (close! res)
-    (when-not (valid-error-names (? e.name))
-      (.log js/console topic (? e.message))
-      (throw e))))
+   (when-not (valid-error-names (? e.name))
+     (put! res [:error [(? e.name) (? e.message)]])
+     (.log js/console topic (? e.message)))
+   (close! res)))
 
 (defrecord FileSystem [fs]
   IFileSystem 
