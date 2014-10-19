@@ -66,9 +66,10 @@
         (fn [granted-bytes]
           (if (>= granted-bytes (* size-in-mb 1024 1024))
             (!> js/window.webkitRequestFileSystem js/PERSISTENT granted-bytes 
-                #(put! c (FileSystem. %))
+                #(put! c [:ok (FileSystem. %)])
                 (partial my-error-handler "webkitRequestFileSystem" c))
-            (do 
+            (do
+              (put! c [:error ["requestQuota" "not enough granted bytes"]])
               (.log js/console "requestQuota" "not enough granted bytes")
               (close! c))))
         (partial my-error-handler "webkitRequestFileSystem" c))
